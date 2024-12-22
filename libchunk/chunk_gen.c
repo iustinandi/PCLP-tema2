@@ -49,7 +49,7 @@ char*** chunk_fill_sphere(
                 for (int k = 0; k < depth; k++) {
                     int distx = x - i, disty = y - j, distz = z - k;
                     double distance = sqrt(distx * distx + disty * disty + distz * distz);
-                    
+
                     if (distance <= radius) {
                         chunk_place_block(chunk, width, height, depth, i, j, k, block);
                     }
