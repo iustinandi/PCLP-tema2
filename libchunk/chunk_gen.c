@@ -1,16 +1,61 @@
 #include "chunk.h"
+#include <math.h>
 
 char*** chunk_place_block(
     char*** chunk, int width, int height, int depth,
     int x, int y, int z, char block) {
+        if (x >= 0 && x < width && y >= 0 && y < height && z >= 0 && z < depth) {
+            chunk[x][y][z] = block;
+        }
+
+        return chunk;
 }
 
 char*** chunk_fill_cuboid(
     char*** chunk, int width, int height, int depth,
     int x0, int y0, int z0, int x1, int y1, int z1, char block) {
+        if (x0 > x1) {
+            int aux = x0;
+            x0 = x1;
+            x1 = aux;
+        }
+        if (y0 > y1) {
+            int aux = y0;
+            y0 = y1;
+            y1 = aux;
+        }
+        if (z0 > z1) {
+            int aux = z0;
+            z0 = z1;
+            z1 = aux;
+        }
+
+        for (int i = x0; i <= x1; i++) {
+            for (int j = y0; j <= y1; j++) {
+                for (int k = z0; k <= z1; k++) {
+                    chunk_place_block(chunk, width, height, depth, i, j, k, block);
+                }
+            }
+        }
+
+        return chunk;
 }
 
 char*** chunk_fill_sphere(
     char*** chunk, int width, int height, int depth,
     int x, int y, int z, double radius, char block) {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                for (int k = 0; k < depth; k++) {
+                    int distx = x - i, disty = y - j, distz = z - k;
+                    double distance = sqrt(distx * distx + disty * disty + distz * distz);
+                    
+                    if (distance <= radius) {
+                        chunk_place_block(chunk, width, height, depth, i, j, k, block);
+                    }
+                }
+            }
+        }
+
+        return chunk;
 }
