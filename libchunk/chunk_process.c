@@ -58,20 +58,44 @@ char*** chunk_shell(
 char*** chunk_fill_xz(
     char*** chunk, int width, int height, int depth,
     int x, int y, int z, char block) {
-        if (x - 1 >= 0 && chunk[x - 1][y][z] == chunk[x][y][z]) {
-            chunk_fill_xz(chunk, width, height, depth, x - 1, y, z, block);
-        }
-        if (x + 1 < width && chunk[x + 1][y][z] == chunk[x][y][z]) {
-            chunk_fill_xz(chunk, width, height, depth, x + 1, y, z, block);
-        }
-        if (z - 1 >= 0 && chunk[x][y][z - 1] == chunk[x][y][z]) {
-            chunk_fill_xz(chunk, width, height, depth, x, y, z - 1, block);
-        }
-        if (z + 1 < depth && chunk[x][y][z + 1] == chunk[x][y][z]) {
-            chunk_fill_xz(chunk, width, height, depth, x, y, z + 1, block);
+        char init_mat = chunk[x][y][z];
+        chunk[x][y][z] = PLACEHOLDER_BLOCK;
+        int placed = 1;
+        while (placed) {
+            placed = 0;
+
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < depth; j++) {
+                    if (chunk[i][y][j] == init_mat) {
+                        if (i - 1 >= 0 && chunk[i - 1][y][j] == PLACEHOLDER_BLOCK) {
+                            chunk[i][y][j] = PLACEHOLDER_BLOCK;
+                            placed = 1;
+                        }
+                        if (i + 1 < width && chunk[i + 1][y][j] == PLACEHOLDER_BLOCK) {
+                            chunk[i][y][j] = PLACEHOLDER_BLOCK;
+                            placed = 1;
+                        }
+                        if (j - 1 >= 0 && chunk[i][y][j - 1] == PLACEHOLDER_BLOCK) {
+                            chunk[i][y][j] = PLACEHOLDER_BLOCK;
+                            placed = 1;
+                        }
+                        if (j + 1 < depth && chunk[i][y][j + 1] == PLACEHOLDER_BLOCK) {
+                            chunk[i][y][j] = PLACEHOLDER_BLOCK;
+                            placed = 1;
+                        }
+                    }
+                }
+            }
         }
 
-        chunk_place_block(chunk, width, height, depth, x, y, z, block);
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < depth; j++) {
+                if (chunk[i][y][j] == PLACEHOLDER_BLOCK) {
+                    chunk[i][y][j] = block;
+                }
+            }
+        }
+
         return chunk;
 }
 
